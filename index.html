@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Planetas</title>
+	<link rel="stylesheet" type="text/css" href="static/materialize-css/dist/css/materialize.min.css">
+</head>
+<body>
+  <h2>aqui los planetas</h2>
+  <div class="container">
+  <div id="contenedorPlanetas">
+  	
+  </ul>
+  	
+  </div>
+
+ <script>
+ var plantillaPlaneta="<div class='card'>" +
+     "<div class='card-image'>"+
+    '<img src="_imagen_">'+
+    "</div>"+
+    "<div class='card-content grey lighten-4'>" +
+    "<h2>Planeta</h2>"+
+    "<p><strong>Nombre:</strong>_nombre_</p>"+
+    "<p><strong>Dense:</strong>_dense_</p>" +
+    "<p><strong>Orber:</strong>_orber_</p>"+
+    "</div>"+
+    "</div>";
+var id = -1; 	
+var contenedor = document.getElementById("contenedorPlanetas");
+  mostrarPlaneta = function(planetas){
+  	planetas.forEach(function(planeta){
+     id += 1;
+  	var nombre = planeta.pl_name;
+  	var dense = planeta.dec;
+  	var orber = planeta.pl_orbper;
+  	var src = "static/img/planetas"+id+".jpg";
+  	
+  	plantilla = plantillaPlaneta .replace("_nombre_", nombre)
+  	                             .replace("_dense_", dense)
+  	                             .replace("_orber_", orber)
+  	                             .replace("_imagen_",src)
+
+  	contenedor.innerHTML +=  plantilla;
+})
+  }
+ 	function getJSON(url){
+ 		return new Promise(function(resolve,reject){
+ 			var ajax = new XMLHttpRequest();
+ 			ajax.open("GET", url);
+ 			ajax.send();
+ 			ajax.onreadystatechange = function(){
+ 				if(ajax.readyState == 4) {
+ 				 resolve(JSON.parse(ajax.responseText));
+ 				}
+ 			}
+ 		})
+ 	}
+     
+ 	getJSON("data/earth-like-results.json")
+ 	.then(function(mensaje) {
+ 		var planetas = (mensaje.results.map(function(planetas){
+    	 return	getJSON(planetas)
+      }));
+ 		return Promise.all(planetas) 		
+ 	})
+ 	.then(function(planetas){
+ 		mostrarPlaneta(planetas)
+ 	})
+
+ 	
+ </script>
+ <script src="static/jquery/dist/jquery.min.js"></script>
+ <script src="static/materialize-css/dist/js/materialize.min.js"></script>
+ <!-- <script src="/static/css/ejemplo.js"></script>	 -->
+</body>
+</html>
